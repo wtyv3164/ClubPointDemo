@@ -6,9 +6,18 @@ const pool = require('../config/database');
 router.post('/', async (req, res) => {
   try {
     const { title, description, start_time, end_time, location, max_participants, club_id } = req.body;
+    
+    // 将ISO格式的日期时间字符串转换为MySQL兼容格式
+    const formatDateTime = (dateTimeStr) => {
+      return new Date(dateTimeStr).toISOString().slice(0, 19).replace('T', ' ');
+    };
+
+    const formattedStartTime = formatDateTime(start_time);
+    const formattedEndTime = formatDateTime(end_time);
+
     const [result] = await pool.execute(
       'INSERT INTO activities (title, description, start_time, end_time, location, max_participants, club_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [title, description, start_time, end_time, location, max_participants, club_id]
+      [title, description, formattedStartTime, formattedEndTime, location, max_participants, club_id]
     );
     res.status(201).json({ id: result.insertId, message: '活动创建成功' });
   } catch (error) {

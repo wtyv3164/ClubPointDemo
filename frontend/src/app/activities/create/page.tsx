@@ -26,6 +26,7 @@ export default function CreateActivityPage() {
         ...values,
         start_time: values.start_time.toISOString(),
         end_time: values.end_time.toISOString(),
+        club_id: 1, // 添加默认的club_id用于测试
       };
 
       const response = await fetch('/api/activities', {
