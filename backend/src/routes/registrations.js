@@ -12,8 +12,8 @@ router.post('/', async (req, res) => {
     );
     res.status(201).json({ id: result.insertId, message: '活动报名成功' });
   } catch (error) {
-    console.error('活动报名失败:', error);
-    res.status(500).json({ message: '活动报名失败' });
+    console.error('请勿重复报名:', error);
+    res.status(500).json({ message: '请勿重复报名' });
   }
 });
 
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 router.get('/activity/:activityId', async (req, res) => {
   try {
     const [registrations] = await pool.execute(
-      'SELECT r.*, u.name as user_name FROM registrations r LEFT JOIN users u ON r.user_id = u.id WHERE r.activity_id = ?',
+      'SELECT r.*, u.username as user_name FROM registrations r LEFT JOIN users u ON r.user_id = u.id WHERE r.activity_id = ?',
       [req.params.activityId]
     );
     res.json(registrations);

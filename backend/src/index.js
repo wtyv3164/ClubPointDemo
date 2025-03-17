@@ -14,10 +14,16 @@ app.use(express.json());
 // 导入路由
 const activitiesRouter = require('./routes/activities');
 const registrationsRouter = require('./routes/registrations');
+const usersRouter = require('./routes/users');
+const pointRulesRouter = require('./routes/point-rules');
+const pointsRouter = require('./routes/points');
 
 // 注册路由
 app.use('/api/activities', activitiesRouter);
 app.use('/api/registrations', registrationsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/point-rules', pointRulesRouter);
+app.use('/api/points', pointsRouter);
 
 // 路由配置
 app.get('/', (req, res) => {

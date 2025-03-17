@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Descriptions, Button, Modal, Form, Input, Rate, List, Avatar, Tag, message } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Activity {
   id: number;
@@ -14,6 +15,12 @@ interface Activity {
   max_participants: number;
   club_id: number;
   status: 'draft' | 'published' | 'cancelled' | 'completed';
+  club_name?: string;
+  current_participants?: number;
+  created_at: string;
+  updated_at: string;
+  image_url?: string;
+  point_value: number;
 }
 
 interface Registration {
@@ -40,11 +47,18 @@ export default function ActivityDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [user, setUser] = useState<any>(null);
+  const [registering, setRegistering] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState<string | null>(null);
 
   useEffect(() => {
     fetchActivityDetails();
     fetchRegistrationStatus();
     fetchFeedbacks();
+    fetchUser();
   }, []);
 
   const fetchActivityDetails = async () => {
@@ -79,17 +93,94 @@ export default function ActivityDetailPage() {
     }
   };
 
-  const handleRegister = async () => {
+  const fetchUser = async () => {
     try {
-      const response = await fetch(`/api/activities/${params.id}/register`, {
-        method: 'POST',
-      });
-      if (response.ok) {
-        message.success('报名成功');
-        fetchRegistrationStatus();
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+        
+        try {
+          const registrationResponse = await fetch(`http://localhost:3002/api/registrations?user_id=${userData.id}&activity_id=${params.id}`);
+          if (registrationResponse.ok) {
+            const registrationData = await registrationResponse.json();
+            if (registrationData && registrationData.length > 0) {
+              setIsRegistered(true);
+              setRegistrationStatus(registrationData[0].status || 'registered');
+            }
+          }
+        } catch (error) {
+          console.error('检查注册状态失败:', error);
+        }
+      }
+      
+      try {
+        const participantsResponse = await fetch(`http://localhost:3002/api/activities/${params.id}/participants`);
+        if (participantsResponse.ok) {
+          const participantsData = await participantsResponse.json();
+          if (activity) {
+            activity.current_participants = participantsData.length;
+          }
+        }
+      } catch (error) {
+        console.error('获取报名人数失败:', error);
+        if (activity) {
+          activity.current_participants = 0;
+        }
       }
     } catch (error) {
-      message.error('报名失败');
+      console.error('获取用户信息失败', error);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    
+    if (isRegistered) {
+      setError('您已经报名了此活动');
+      return;
+    }
+    
+    setError(null);
+    setSuccess(null);
+    setRegistering(true);
+    
+    try {
+      const response = await fetch('http://localhost:3002/api/registrations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          activity_id: activity?.id,
+        }),
+      });
+      
+      if (response.ok) {
+        setSuccess('报名成功！您已成功报名参加此活动');
+        setIsRegistered(true);
+        setRegistrationStatus('registered');
+        
+        if (activity) {
+          activity.current_participants = (activity.current_participants || 0) + 1;
+        }
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || '报名失败，请稍后再试');
+      }
+    } catch (error) {
+      console.error('报名请求失败:', error);
+      setError('报名请求失败，请检查网络连接');
+    } finally {
+      setRegistering(false);
     }
   };
 
@@ -141,8 +232,36 @@ export default function ActivityDetailPage() {
     return <Tag color={color}>{text}</Tag>;
   };
 
+  const remainingSpots = activity.max_participants - (activity.current_participants || 0);
+  const isActivityFull = remainingSpots <= 0;
+  const isActivityStarted = new Date(activity.start_time) <= new Date();
+  const isActivityEnded = new Date(activity.end_time) < new Date();
+  const canRegister = !isRegistered && !isActivityFull && !isActivityEnded && activity.status === 'active';
+
   return (
     <div className="p-6">
+      {success && (
+        <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md mb-6">
+          <div className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="text-green-700">{success}</p>
+          </div>
+        </div>
+      )}
+      
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+          <div className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-red-700">{error}</p>
+          </div>
+        </div>
+      )}
+      
       <Card title={activity.title}>
         <Descriptions bordered>
           <Descriptions.Item label="活动描述">{activity.description}</Descriptions.Item>
@@ -150,6 +269,7 @@ export default function ActivityDetailPage() {
           <Descriptions.Item label="结束时间">{new Date(activity.end_time).toLocaleString()}</Descriptions.Item>
           <Descriptions.Item label="地点">{activity.location}</Descriptions.Item>
           <Descriptions.Item label="最大参与人数">{activity.max_participants}</Descriptions.Item>
+          <Descriptions.Item label="当前参与人数">{activity.current_participants ?? '0'}</Descriptions.Item>
           <Descriptions.Item label="报名状态">{getRegistrationStatusTag()}</Descriptions.Item>
         </Descriptions>
 

@@ -22,7 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
             <div className="text-sm text-gray-500">
-              © {new Date().getFullYear()} 校内社团积分系统. All rights reserved.
+              © {new Date().getFullYear()} 校内社活星云. All rights reserved.
             </div>
             <div className="flex space-x-6">
               <a href="#" className="text-sm text-gray-500 hover:text-blue-500">关于我们</a>
