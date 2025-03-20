@@ -2,22 +2,23 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
-// 中间件：检查用户是否为管理员
+// 中间件：检查用户是否为管理员 - 修改为检查操作者而非被操作用户
 const checkAdmin = async (req, res, next) => {
   try {
-    const userId = req.body.userId || req.query.userId;
+    // 使用operatorId而不是userId来检查权限
+    const operatorId = req.body.operatorId; 
     
-    if (!userId) {
+    if (!operatorId) {
       return res.status(401).json({ message: '未授权，请先登录' });
     }
     
     const [users] = await pool.query(
       'SELECT role FROM users WHERE id = ?',
-      [userId]
+      [operatorId]
     );
     
     if (users.length === 0) {
-      return res.status(404).json({ message: '用户不存在' });
+      return res.status(404).json({ message: '操作者不存在' });
     }
     
     if (users[0].role !== 'admin') {

@@ -64,7 +64,7 @@ export default function PointsPage() {
     fetchLeaderboard();
     
     // 获取积分统计数据
-    fetchStats();
+    //fetchStats();
   }, []);
 
   const fetchTransactions = async (type = '') => {
@@ -103,34 +103,34 @@ export default function PointsPage() {
     }
   };
   
-  const fetchStats = async (selectedPeriod = 'month') => {
-    try {
-      const userObj = JSON.parse(localStorage.getItem('user') || '{}');
-      const url = `http://localhost:3002/api/points/stats?userId=${userObj.id}&period=${selectedPeriod}`;
+  // const fetchStats = async (selectedPeriod = 'month') => {
+  //   try {
+  //     const userObj = JSON.parse(localStorage.getItem('user') || '{}');
+  //     const url = `http://localhost:3002/api/points/stats?userId=${userObj.id}&period=${selectedPeriod}`;
       
-      const response = await fetch(url);
+  //     const response = await fetch(url);
       
-      if (!response.ok) {
-        throw new Error('获取积分统计数据失败');
-      }
+  //     if (!response.ok) {
+  //       throw new Error('获取积分统计数据失败');
+  //     }
       
-      const data = await response.json();
-      setEarnStats(data.earnStats);
-      setConsumeStats(data.consumeStats);
-    } catch (err: any) {
-      console.error('获取积分统计数据失败:', err);
-    }
-  };
+  //     const data = await response.json();
+  //     setEarnStats(data.earnStats);
+  //     setConsumeStats(data.consumeStats);
+  //   } catch (err: any) {
+  //     console.error('获取积分统计数据失败:', err);
+  //   }
+  // };
 
   const handleTransactionTypeChange = (type: string) => {
     setTransactionType(type);
     fetchTransactions(type);
   };
   
-  const handlePeriodChange = (selectedPeriod: string) => {
-    setPeriod(selectedPeriod);
-    fetchStats(selectedPeriod);
-  };
+  // const handlePeriodChange = (selectedPeriod: string) => {
+  //   setPeriod(selectedPeriod);
+  //   fetchStats(selectedPeriod);
+  // };
 
   // 格式化日期时间
   const formatDateTime = (dateTimeStr: string) => {
@@ -176,7 +176,7 @@ export default function PointsPage() {
             >
               积分明细
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab('stats')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'stats'
@@ -185,7 +185,7 @@ export default function PointsPage() {
               }`}
             >
               积分统计
-            </button>
+            </button> */}
             <button
               onClick={() => setActiveTab('leaderboard')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
@@ -314,7 +314,7 @@ export default function PointsPage() {
         </div>
       )}
       
-      {activeTab === 'stats' && (
+      {/* {activeTab === 'stats' && (
         <div>
           <div className="mb-4 flex space-x-4">
             <button
@@ -431,7 +431,7 @@ export default function PointsPage() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       
       {activeTab === 'leaderboard' && (
         <div className="bg-white p-6 rounded-lg shadow-md">

@@ -26,8 +26,10 @@ export default function AwardPointsPage() {
   const [rules, setRules] = useState<PointRule[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -75,27 +77,55 @@ export default function AwardPointsPage() {
     }
   };
   
-  const fetchUsers = async () => {
+  const fetchUsers = async (retryCount = 0) => {
     try {
-      // 这里假设有获取用户列表的API
-      // 实际项目中应该实现这个API
-      // 这里使用模拟数据
-      setUsers([
-        { id: 1, username: '用户1', email: 'user1@example.com', total_points: 100 },
-        { id: 2, username: '用户2', email: 'user2@example.com', total_points: 200 },
-        { id: 3, username: '用户3', email: 'user3@example.com', total_points: 300 },
-      ]);
+      setIsLoadingUsers(true);
+      // 从后端获取真实用户数据
+      const response = await fetch('http://localhost:3002/api/users');
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('获取用户列表失败:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        
+        // 如果是网络错误且重试次数小于3次，则重试
+        if (response.status === 0 && retryCount < 3) {
+          console.log(`重试获取用户列表 (${retryCount + 1}/3)...`);
+          await new Promise(resolve => setTimeout(resolve, 1000)); // 等待1秒后重试
+          return fetchUsers(retryCount + 1);
+        }
+        
+        throw new Error(`获取用户列表失败: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('获取到的用户列表:', data);
+      
+      if (!Array.isArray(data)) {
+        console.error('返回的数据格式不正确:', data);
+        throw new Error('返回的数据格式不正确');
+      }
+      
+      setUsers(data);
+      setError('');
     } catch (err: any) {
       console.error('获取用户列表失败:', err);
-      setError('获取用户列表失败，请稍后再试');
+      setError(`获取用户列表失败: ${err.message}`);
+      setUsers([]);
+    } finally {
+      setIsLoadingUsers(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     
-    // 检查用户权限
+    // 检查用户是否为管理员
     if (!user || user.role !== 'admin') {
       setError('权限不足，只有管理员可以手动发放积分');
       return;
@@ -110,6 +140,11 @@ export default function AwardPointsPage() {
     setLoading(true);
 
     try {
+      // 查找用户名用于显示
+      const targetUser = users.find(u => u.id === parseInt(userId));
+      const ruleName = rules.find(r => r.id === parseInt(ruleId))?.rule_name || '';
+      const ruleType = rules.find(r => r.id === parseInt(ruleId))?.rule_type || 'earn';
+      
       const response = await fetch('http://localhost:3002/api/points/award', {
         method: 'POST',
         headers: {
@@ -119,7 +154,7 @@ export default function AwardPointsPage() {
           userId: parseInt(userId),
           ruleId: parseInt(ruleId),
           points: parseInt(points),
-          description,
+          description: description || `管理员手动${ruleType === 'earn' ? '发放' : '扣除'}积分`,
           operatorId: user.id // 操作人ID
         }),
       });
@@ -130,13 +165,17 @@ export default function AwardPointsPage() {
         throw new Error(data.message || '发放积分失败');
       }
 
-      alert('积分发放成功！');
+      // 设置成功信息
+      setSuccess(`成功${ruleType === 'earn' ? '发放' : '扣除'} ${points} 积分给用户 ${targetUser?.username || userId}！`);
       
       // 重置表单
       setUserId('');
       setRuleId('');
       setPoints('');
       setDescription('');
+      
+      // 刷新用户列表以显示更新后的积分
+      fetchUsers();
     } catch (err: any) {
       setError(err.message || '发放积分失败，请稍后再试');
     } finally {
@@ -173,8 +212,28 @@ export default function AwardPointsPage() {
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4">
           <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+              </svg>
+            </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">{error}</h3>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {success && (
+        <div className="mb-6 rounded-md bg-green-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-green-800">{success}</h3>
             </div>
           </div>
         </div>
@@ -194,11 +253,17 @@ export default function AwardPointsPage() {
               onChange={(e) => setUserId(e.target.value)}
             >
               <option value="">-- 选择用户 --</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username} ({user.email}) - 当前积分: {user.total_points}
-                </option>
-              ))}
+              {isLoadingUsers ? (
+                <option disabled>加载用户列表中...</option>
+              ) : users.length > 0 ? (
+                users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.username} ({user.email}) - 当前积分: {user.total_points}
+                  </option>
+                ))
+              ) : (
+                <option disabled>暂无用户数据</option>
+              )}
             </select>
           </div>
           

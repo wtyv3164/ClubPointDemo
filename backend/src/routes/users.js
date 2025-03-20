@@ -107,4 +107,36 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// 获取所有用户列表
+router.get('/', async (req, res) => {
+  try {
+    // 可选的查询参数
+    const { limit = 100, offset = 0, search = '' } = req.query;
+    
+    let query = `
+      SELECT id, username, email, role, total_points, created_at
+      FROM users
+    `;
+    
+    const queryParams = [];
+    
+    // 添加搜索条件
+    if (search) {
+      query += ` WHERE username LIKE ? OR email LIKE ? `;
+      queryParams.push(`%${search}%`, `%${search}%`);
+    }
+    
+    // 添加排序和分页
+    query += ` ORDER BY username ASC LIMIT ? OFFSET ? `;
+    queryParams.push(parseInt(limit), parseInt(offset));
+    
+    const [users] = await pool.query(query, queryParams);
+    
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('获取用户列表错误:', error);
+    res.status(500).json({ message: '服务器错误' });
+  }
+});
+
 module.exports = router; 

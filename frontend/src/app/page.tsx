@@ -154,7 +154,7 @@ export default function HomePage() {
                   <div className="text-center">
                     <p className="text-2xl font-bold mb-3">加入社团，赢取积分</p>
                     <p className="max-w-xs mx-auto">参与社团活动，提升个人技能，收获友谊与成长</p>
-                  </div>
+      </div>
                 </div>
               </div>
               {user && (
