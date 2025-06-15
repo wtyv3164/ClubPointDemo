@@ -236,7 +236,10 @@ export default function ActivityDetailPage() {
   const isActivityFull = remainingSpots <= 0;
   const isActivityStarted = new Date(activity.start_time) <= new Date();
   const isActivityEnded = new Date(activity.end_time) < new Date();
-  const canRegister = !isRegistered && !isActivityFull && !isActivityEnded && activity.status === 'active';
+  const canRegister = !isRegistered && 
+                   !isActivityFull && 
+                   !isActivityEnded &&
+                   activity.status === 'published'; // 使用已有状态
 
   return (
     <div className="p-6">
