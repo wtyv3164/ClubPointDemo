@@ -78,7 +78,7 @@ export default function HomePage() {
       setLoading(false);
     } catch (err) {
       console.error('获取活动失败:', err);
-      setError('获取活动数据失败，请稍后再试');
+      setError('获取活动数据失败');
       setLoading(false);
     }
   };
@@ -320,34 +320,6 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* 用户统计区域 */}
-      {/* <div className="bg-gradient-to-r from-indigo-600 to-purple-600 py-16 text-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">平台数据</h2>
-            <p className="text-indigo-200">社活星云运行情况</p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-300 hover:scale-105">
-              <div className="text-4xl font-bold mb-2">1200+</div>
-              <div className="text-indigo-200 text-sm">注册用户</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-300 hover:scale-105">
-              <div className="text-4xl font-bold mb-2">50+</div>
-              <div className="text-indigo-200 text-sm">活跃社团</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-300 hover:scale-105">
-              <div className="text-4xl font-bold mb-2">320+</div>
-              <div className="text-indigo-200 text-sm">发布活动</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 transform transition-all duration-300 hover:scale-105">
-              <div className="text-4xl font-bold mb-2">25,000</div>
-              <div className="text-indigo-200 text-sm">积分已发放</div>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
