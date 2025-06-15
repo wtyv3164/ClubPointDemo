@@ -37,7 +37,9 @@ const Navbar = () => {
     setUser(null);
     setShowDropdown(false);
     // 跳转到首页
-    router.push('/');
+    // router.push('/');
+    // 完全刷新页面（包括重新加载所有初始状态）
+    window.location.href = '/';  // 这会强制刷新整个应用
   };
 
   return (
@@ -129,13 +131,13 @@ const Navbar = () => {
                         <span className="block text-pink-500 font-medium">{user.totalPoints}</span>
                         <span className="block text-xs text-gray-500">积分</span>
                       </div>
-                      <Link 
+                      {/* <Link 
                         href="/points" 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-pink-500"
                         onClick={() => setShowDropdown(false)}
                       >
                         积分明细
-                      </Link>
+                      </Link> */}
                       <Link 
                         href="/user/profile" 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-pink-500"
@@ -176,7 +178,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 二级导航 - 只在特定页面显示，可根据路由条件渲染 */}
+      {/* 二级导航 - 只在特定页面显示，可根据路由条件渲染
       <div className="bg-white border-b border-gray-100 h-10 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 h-full">
           <div className="flex h-full items-center space-x-6">
@@ -185,7 +187,7 @@ const Navbar = () => {
             <Link href="/activities/recommended" className="text-sm text-gray-600 hover:text-pink-500">推荐活动</Link>
           </div>
         </div>
-      </div>
+      </div> */}
     </header>
   );
 };

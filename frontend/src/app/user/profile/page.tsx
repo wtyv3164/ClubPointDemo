@@ -38,6 +38,7 @@ export default function ProfilePage() {
       setUser(JSON.parse(storedUser));
       // 如果有真实的用户数据，加载活动和积分记录
       fetchUserData(JSON.parse(storedUser).id);
+      console.log("user数据:", storedUser)
     } else {
       // 未登录，跳转到登录页
       router.push('/auth/login');
@@ -351,7 +352,7 @@ export default function ProfilePage() {
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1">注册时间</h3>
                     <p className="text-lg font-medium text-gray-900">
-                      {user.createdAt ? formatDateTime(user.createdAt) : '2023-09-01 08:30:00'}
+                      {user.created_at ? formatDateTime(user.created_at) : '2025-09-01 08:30:00'}
                     </p>
                   </div>
                   <div>

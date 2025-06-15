@@ -321,7 +321,7 @@ export default function HomePage() {
       </div>
 
       {/* 用户统计区域 */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 py-16 text-white">
+      {/* <div className="bg-gradient-to-r from-indigo-600 to-purple-600 py-16 text-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-2">平台数据</h2>
@@ -347,7 +347,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

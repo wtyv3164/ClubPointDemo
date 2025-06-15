@@ -26,24 +26,8 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4">快速链接</h3>
-            <ul className="space-y-2">
-              <li><Link href="/" className="text-gray-400 hover:text-pink-500 transition-colors">首页</Link></li>
-              <li><Link href="/activities" className="text-gray-400 hover:text-pink-500 transition-colors">活动中心</Link></li>
-              <li><Link href="/points" className="text-gray-400 hover:text-pink-500 transition-colors">积分中心</Link></li>
-              <li><Link href="/point-rules" className="text-gray-400 hover:text-pink-500 transition-colors">积分规则</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4">帮助</h3>
-            <ul className="space-y-2">
-              <li><Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">使用指南</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">常见问题</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">联系我们</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">用户反馈</Link></li>
-            </ul>
-          </div>
+
+
           <div>
             <h3 className="text-lg font-semibold mb-4">联系我们</h3>
             <ul className="space-y-2 text-gray-400">
@@ -72,20 +56,9 @@ const Footer = () => {
         
         <div className="pt-8 mt-8 border-t border-gray-800 text-center">
           <div className="flex flex-col md:flex-row items-center justify-between mb-4">
-            <div className="flex items-center mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-pink-500 rounded-md flex items-center justify-center text-white font-bold mr-3">
-                CP
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-pink-500 to-blue-600 bg-clip-text text-transparent">
-                ClubPoint
-              </span>
-            </div>
+
             
-            <div className="flex space-x-6 text-sm">
-              <Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">隐私政策</Link>
-              <Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">用户协议</Link>
-              <Link href="#" className="text-gray-400 hover:text-pink-500 transition-colors">Cookie政策</Link>
-            </div>
+   
           </div>
           
           <p className="text-gray-400 text-sm">© {new Date().getFullYear()} ClubPoint 社活星云. 保留所有权利.</p>

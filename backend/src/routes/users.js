@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
     
     // 查询用户
     const [users] = await pool.query(
-      'SELECT id, username, email, role, total_points FROM users WHERE username = ? AND password = ?',
+      'SELECT id, username, email, role, total_points, created_at FROM users WHERE username = ? AND password = ?',
       [username, password]
     );
     
@@ -68,9 +68,11 @@ router.post('/login', async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        totalPoints: user.total_points
+        totalPoints: user.total_points,
+        created_at: user.created_at
       }
     });
+    // console.log('用户登录成功:', user);
   } catch (error) {
     console.error('登录错误:', error);
     res.status(500).json({ message: '服务器错误' });

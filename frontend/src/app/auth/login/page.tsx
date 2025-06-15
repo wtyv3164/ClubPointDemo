@@ -31,12 +31,8 @@ export default function LoginPage() {
         throw new Error(data.message || '登录失败');
       }
 
-      // 保存用户信息到本地存储
       localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // 跳转到首页
-      router.push('/');
-      // window.location.reload();
+      window.location.href = '/';
     } catch (err: any) {
       setError(err.message || '登录失败，请稍后再试');
     } finally {
@@ -45,10 +41,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-200">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
             登录账户
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -58,9 +54,9 @@ export default function LoginPage() {
             </Link>
           </p>
         </div>
-        
+
         {error && (
-          <div className="rounded-md bg-red-50 p-4">
+          <div className="mt-4 rounded-md bg-red-50 p-4">
             <div className="flex">
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800">{error}</h3>
@@ -68,11 +64,11 @@ export default function LoginPage() {
             </div>
           </div>
         )}
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="-space-y-px rounded-md shadow-sm">
+          <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="sr-only">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-900">
                 用户名
               </label>
               <input
@@ -80,14 +76,15 @@ export default function LoginPage() {
                 name="username"
                 type="text"
                 required
-                className="relative block w-full rounded-t-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                className="mt-1 block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                 placeholder="用户名"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-900">
                 密码
               </label>
               <input
@@ -95,7 +92,7 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
-                className="relative block w-full rounded-b-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                className="mt-1 block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                 placeholder="密码"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -116,4 +113,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-} 
+}
